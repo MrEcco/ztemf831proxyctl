@@ -1,0 +1,13 @@
+[Unit]
+Description=Proxy Control Interface
+After=network.target
+
+[Service]
+WorkingDirectory=/usr/lib/proxyctl
+ExecStart=/usr/bin/python3 -u /usr/lib/proxyctl/server.py
+KillMode=process
+Restart=on-failure
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

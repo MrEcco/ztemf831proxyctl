@@ -1,0 +1,43 @@
+# interfaces(5) file used by ifup(8) and ifdown(8)
+
+# Please note that this file is written to be used with dhcpcd
+# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
+
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
+
+auto eth0
+iface eth0 inet dhcp
+    post-up /sbin/ip route del 0/0
+    post-up /sbin/ip route add default via 192.168.1.1 dev eth0
+
+allow-hotplug usb0
+#iface usb0 inet static
+iface usb0 inet dhcp
+    post-up /usr/bin/python3 -u /etc/network/ifupdown.py usb0 up
+    post-down /usr/bin/python3 -u /etc/network/ifupdown.py usb0 down
+
+allow-hotplug usb1
+iface usb1 inet dhcp
+    post-up /usr/bin/python3 -u /etc/network/ifupdown.py usb1 up
+    post-down /usr/bin/python3 -u /etc/network/ifupdown.py usb1 down
+
+allow-hotplug usb2
+iface usb2 inet dhcp
+    post-up /usr/bin/python3 -u /etc/network/ifupdown.py usb2 up
+    post-down /usr/bin/python3 -u /etc/network/ifupdown.py usb2 down
+
+allow-hotplug usb3
+iface usb3 inet dhcp
+    post-up /usr/bin/python3 -u /etc/network/ifupdown.py usb3 up
+    post-down /usr/bin/python3 -u /etc/network/ifupdown.py usb3 down
+
+allow-hotplug usb4
+iface usb4 inet dhcp
+    post-up /usr/bin/python3 -u /etc/network/ifupdown.py usb4 up
+    post-down /usr/bin/python3 -u /etc/network/ifupdown.py usb4 down
+
+allow-hotplug usb5
+iface usb5 inet dhcp
+    post-up /usr/bin/python3 -u /etc/network/ifupdown.py usb5 up
+    post-down /usr/bin/python3 -u /etc/network/ifupdown.py usb5 down
