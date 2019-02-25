@@ -1,3 +1,3 @@
 # LTE-proxy on raspberry
 
-Work with six ZTE MF79 modems
+Work with six ZTE MF831 modems
