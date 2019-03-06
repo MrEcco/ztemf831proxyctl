@@ -15,9 +15,13 @@ from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-### ONLY FOR ZTE MF79 (may be with RU firmware)
+### ONLY FOR ZTE MF831 (may be with RU firmware)
 
 ADDRESS_TEMPLATE = '172.30.{}.1'
+
+PROXY_TEMPLATE = "http://user{}:123@127.0.0.1:3128"
+
+ext_ip_cache = {}
 
 class HTTPHandler(BaseHTTPRequestHandler):
    server_version = "nginx"
@@ -38,7 +42,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
       elif self.path[:11] == "/api/status":
          retobj = {'devices':[]}
          def set_status(num, address):
-            retobj['devices'].append({'id':str(num),'status':get_status(address)})
+            retobj['devices'].append({'id':str(num),'status':get_status(address),'ip':ext_ip_cache[num]})
          routines = [threading.Thread(target=set_status, args=(i, ADDRESS_TEMPLATE.format(i))) for i in range(1,7)]
          for i in routines:
             i.start()
@@ -225,9 +229,32 @@ def get_file_content(filename):
       return
 
 def run_backend(port=80):
-   httpd = HTTPServer(('127.0.0.1', port), HTTPHandler)
+   httpd = HTTPServer(('0.0.0.0', port), HTTPHandler)
+   # httpd = HTTPServer(('127.0.0.1', port), HTTPHandler)
    httpd.serve_forever()
    httpd.server_close()
 
+def get_external_ip(num):
+   http_proxy = PROXY_TEMPLATE.format(num)
+   ext_ip = 'UNKNOWN'
+   try:
+      ext_ip = requests.get('http://whatismyip.akamai.com/',proxies={"http":http_proxy}).content.decode('ascii')
+   except:
+      ext_ip = 'UNKNOWN'
+   return ext_ip
+
+def upgrade_ext_ip_cache_routine():
+   global ext_ip_cache
+   while True:
+      for i in range(1,7):
+         ext_ip_cache[i] = get_external_ip(i)
+      time.sleep(10)
+
+def run_ext_ip_cacher():
+   routine = threading.Thread(target=upgrade_ext_ip_cache_routine, args=())
+   routine.start()
+
 run_loginer()
+run_ext_ip_cacher()
+time.sleep(1)
 run_backend()
