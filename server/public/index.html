@@ -108,19 +108,14 @@
 															<span
 																v-bind:class="{ 'badge-danger': (item.status === 'DISCONNECTED'), 'badge-success': item.status === 'CONNECTED' }"
 																class="badge badge-pill badge-secondary ml-2"
-															>{{ item.status }}</span
+															>
+																<span v-if="item.status === 'CONNECTED'">{{ item.ip }}</span>
+																<span v-else>{{ item.status }}</span>
+															</span
 															>
 														</div>
 													</div>
 													<div class="card-footer bg-light">
-														<button
-															type="button"
-															v-bind:class="{ 'btn-outline-dark disabled': (item.status === 'DISCONNECTED' || item.status === 'UNKNOWN') }"
-															class="btn btn-sm btn-outline-danger"
-															v-on:click="stopDevice(item.id)"
-														>
-															Stop
-														</button>
 														<button
 															type="button"
 															v-bind:class="{ 'btn-outline-dark disabled': (item.status === 'CONNECTED' || item.status === 'UNKNOWN') }"
@@ -128,6 +123,14 @@
 															v-on:click="startDevice(item.id)"
 														>
 															Start
+														</button>
+														<button
+															type="button"
+															v-bind:class="{ 'btn-outline-dark disabled': (item.status === 'DISCONNECTED' || item.status === 'UNKNOWN') }"
+															class="btn btn-sm btn-outline-danger"
+															v-on:click="stopDevice(item.id)"
+														>
+															Stop
 														</button>
 														<button
 															type="button"
@@ -168,7 +171,7 @@
 		<script src="js/vue.min.js"></script>
 		<script>
 			var data = {
-				apiUrl: 'http://proxyctl.org',
+				apiUrl: 'http://awesome-proxy.sqwa.de:23080',
 				isLoading: true,
 				status: [],
 				systemStatus: 'CONNECTED'
