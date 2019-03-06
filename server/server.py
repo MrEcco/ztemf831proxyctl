@@ -236,11 +236,11 @@ def run_backend(port=80):
 
 def get_external_ip(num):
    http_proxy = PROXY_TEMPLATE.format(num)
-   ext_ip = 'UNKNOWN'
+   ext_ip = 'WAIT'
    try:
       ext_ip = requests.get('http://whatismyip.akamai.com/',proxies={"http":http_proxy}).content.decode('ascii')
    except:
-      ext_ip = 'UNKNOWN'
+      ext_ip = 'WAIT'
    return ext_ip
 
 def upgrade_ext_ip_cache_routine():
